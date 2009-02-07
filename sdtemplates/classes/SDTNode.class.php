@@ -57,13 +57,23 @@ class SDTNode {
 	}
 	
 	function appendChild ( $childNode ) {
+		$this->DOMNode->appendChild ( $childNode->DOMNode );
+	}
+	
+	function appendChildFromText ( $string ) {
+		$this->DOMNode->appendChild(
+			$this->DOMNode->ownerDocument->importNode(
+				dom_import_simplexml( simplexml_load_string( $string ) ) ,
+				true
+			)
+		);
 		
 	}
 	
-	function cloneNode ( ) {
-		return new TPLNode (
-			NULL ,
-			$this->DOMNode->cloneNode() ,
+	function cloneNode ( $deep = true ) {
+		return new SDTNode (
+			$this->parentPage ,
+			$this->DOMNode->cloneNode( $deep ) ,
 			$this->sourceFile );
 	}
 	
