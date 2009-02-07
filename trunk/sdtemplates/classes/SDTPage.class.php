@@ -107,32 +107,39 @@ class SDTPage {
 	}
 	
 	function walkThrough ( $tab = "\t" , $prefix = "" , $node = NULL ) {
+		$return_string = "";
 		if ( is_null($node) ) {
 			$node = $this->DOMDocument;
 		}
-		print "$prefix NAME , TYPE : ".$node->nodeName." , ".
+		$return_string .= "$prefix NAME , TYPE : ".$node->nodeName." , ".
 			$node->nodeType."\n";
-		if ( $node->nodeType == 3) {
-			print "$prefix VALUE: ".$node->nodeValue."\n";
+		if ( $node->nodeType == XML_TEXT_NODE ) {
+			$return_string .= "$prefix VALUE: ".$node->nodeValue."\n";
 		}
 		if ( $node->hasAttributes() ) {
 			$attributes = $node->attributes;
 			$Nattrs = $attributes->length;
-			print "$prefix $Nattrs attributes.\n";
+			$return_string .= "$prefix $Nattrs attributes.\n";
 			for ( $index = 0 ; $index < $Nattrs ; $index++ ) {
-				print $prefix." ".$attributes->item ( $index )->name.
+				$return_string .=
+					$prefix." ".$attributes->item ( $index )->name.
 					": ".$attributes->item ( $index )->value."\n";
 			}
 		}
 		if ( $node->hasChildNodes() ) {
 			$mylist = $node->childNodes;
 			$Nnodes = $mylist->length;
-			print "$prefix $Nnodes nodes.\n";
+			$return_string .= "$prefix $Nnodes nodes.\n";
 			for ( $index = 0 ; $index < $Nnodes ; $index++ ) {
 				$subnode = $mylist->item ( $index );
-				$this->walkThrough( $tab , $prefix.$tab , $subnode );
+				$return_string .= $this->walkThrough(
+										$tab ,
+										$prefix.$tab ,
+										$subnode
+									);
 			}
 		}
+		return $return_string;
 	}
 	
 }
