@@ -106,7 +106,14 @@ class SDTNode {
 	}
 	
 	function appendChild ( $childNode ) {
-		$this->DOMNode->appendChild ( $childNode->DOMNode );
+		if ( ! $this->parentPage->DOMDocument->isSameNode(
+							$childNode->parentPage->DOMDocument ) ) {
+			$childDOMNode = $this->DOMNode->ownerDocument->importNode(
+				$childNode->DOMNode , true );
+		} else {
+			$childDOMNode = $childNode->DOMNode;
+		}
+		$this->DOMNode->appendChild ( $childDOMNode );
 	}
 	
 	function appendChildFromText ( $string ) {
