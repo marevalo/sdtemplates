@@ -26,8 +26,8 @@ $body->appendChildFromText ( "
 " );
 
 // Using a node inside the page as a subtemplate, modify and append it
-$toc = $mypage->getNodeByClass( "toc" );
-$element = $mypage->getNodeByClass( "toc_el" )->cloneNode();
+$toc = $body->getNodeByClass( "toc" );
+$element = $toc->getNodeByClass( "toc_el" )->cloneNode();
 $copy = $element->cloneNode();
 $toc->deleteChildren();
 $copy->setContent( "New entry 1" );
