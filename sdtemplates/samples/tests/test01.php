@@ -2,14 +2,13 @@
 /*
  * Test #1 : Basic substitutions
  */
-include_once( "SDTPage.class.php" );
+include_once( "SDTRepository.class.php" );
 
-// At this moment we don't have any SDTModule class
-//SDTSetBase ( "templates" );
-//SDTSetCurrentLibrary ( "basico" );
+// Set repository
+$repo = SDTSetBase ( "templates" );
 
-// We create the page directly from file
-$mypage = new SDTPage ( "templates/basic/frontpage.html" );
+// We get the file from repository
+$mypage = $repo->getPage ( "frontpage.html" );
 
 // Change the window title
 $windowtitle = $mypage->getFirstNodeByTagName("title");

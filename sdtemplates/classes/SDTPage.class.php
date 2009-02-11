@@ -3,9 +3,11 @@ include_once( "SDTNode.class.php" );
 
 class SDTPage extends SDTNode {
 	protected $DOMDocument ;
+	protected $parentRepository ;
 	
-	function __construct ( $filename , $DOMDocument = NULL ) {
+	function __construct ( $parentRepo , $filename , $DOMDocument = NULL ) {
 		$this->sourceFile = $filename ;
+		$this->parentRepository = $parentRepo ;
 		if ( is_null( $DOMDocument) ) {
 			$this->DOMDocument = new DOMDocument();
 			$this->DOMDocument->loadHTMLFile($filename);
