@@ -5,7 +5,7 @@
 include_once( "SDTRepository.class.php" );
 
 // Set repository
-$repo = SDTSetBase ( "templates" );
+$repo = new SDTRepository ( "templates" );
 
 // We get the files from repository
 $frontpage = $repo->getPage ( "frontpage.html" );
