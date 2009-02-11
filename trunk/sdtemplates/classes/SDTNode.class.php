@@ -168,5 +168,53 @@ class SDTNode {
 		}
 		return $return_string;
 	}
+	
+	protected function map ( $function , $node = NULL ) {
+		if ( is_null($node) ) {
+			$node = $this->DOMNode;
+		}
+		$this->$function ( $node );
+		if ( $node->hasChildNodes() ) {
+			$mylist = $node->childNodes;
+			$Nnodes = $mylist->length;
+			for ( $index = 0 ; $index < $Nnodes ; $index++ ) {
+				$subnode = $mylist->item ( $index );
+				$this->map ( $function , $subnode ) ;
+			}
+		}
+	}
+
+	private function resolveRelativePaths ( $node ) {
+		if ( $node->hasAttributes() ) {
+			$attributes = $node->attributes;
+			$Nattrs = $attributes->length;
+			for ( $index = 0 ; $index < $Nattrs ; $index++ ) {
+				$name = $attributes->item ( $index )->name;
+				$value = $attributes->item ( $index )->value;
+				if ( in_array (	$name ,
+						$this->parentPage->parentRepository->urlAttributes )
+						) {
+					if ( $value[0] == '.' || $value[0] == '/' ) {
+						trigger_error ( "SDT Error : ".
+							"Invalid absolute or . or .. relative path on ".
+							"attribute '".$name."'"
+						);
+					}
+					if ( ! strpos ( $value , ':' ) ) {
+						$node->setAttribute (
+							$name ,
+							$this->parentPage->
+								parentRepository->getPublicURI()."/".
+							$this->parentPage->
+								parentRepository->getActiveTheme()."/".
+							$value
+						);
+					}
+				}
+			}
+		}
+		
+	}
+	
 }
 ?>
