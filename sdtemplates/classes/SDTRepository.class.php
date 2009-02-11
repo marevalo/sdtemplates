@@ -7,9 +7,47 @@ class SDTRepository {
 	private $activeTheme ;
 	private $availableThemes = array();
 	
+	/* These are the attributes which holds URIs for TAGS (as of HTML4.01):
+	 * action FORM
+	 * background BODY
+	 * cite BLOCKQUOTE, Q
+	 * cite DEL, INS
+	 * classid OBJECT
+	 * codebase OBJECT
+	 * codebase APPLET
+	 * data OBJECT
+	 * href A, AREA, LINK
+	 * href BASE (base URI for all relative paths)
+	 * longdesc IMG
+	 * longdesc FRAME, IFRAME
+	 * profile HEAD
+	 * src SCRIPT
+	 * src INPUT
+	 * src FRAME, IFRAME
+	 * src IMG
+	 * usemap IMG, INPUT, OBJECT
+	 */
+	public $urlAttributes = array (
+		"action" ,
+		"background" ,
+		"cite" ,
+		"classid" ,
+		"codebase" ,
+		"data" , 
+		"href" ,
+		"longdesc" ,
+		"profile" ,
+		"src" ,
+		"usemap" ,
+	);
+	
+	
+	
 	function __construct ( $sourceURI , $publicURI = NULL ) {
 		$this->sourceURI = $sourceURI ;
-		$this->publicURI = $publicURI ;
+		$this->publicURI = ( is_null($publicURI) ) ?
+			 $sourceURI :
+			 $publicURI ;
 		if ( $dirh = @openDir($sourceURI) ) {
 			while ( $readh = readdir($dirh) ) {
 				if ( is_dir($this->sourceURI."/".$readh) &&

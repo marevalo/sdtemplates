@@ -23,28 +23,8 @@ class SDTPage extends SDTNode {
 			$this->DOMDocument = $DOMDocument ;
 		}
 		parent::__construct( $this , $this->DOMDocument , $filename );
-		/* After this we should process all relative URI attrs
-		 * for TAGS (HTML4.01):
-		 * action FORM
-		 * background BODY
-		 * cite BLOCKQUOTE, Q
-		 * cite DEL, INS
-		 * classid OBJECT
-		 * codebase OBJECT
-		 * codebase APPLET
-		 * data OBJECT
-		 * href A, AREA, LINK
-		 * href BASE (base URI for all relative paths)
-		 * longdesc IMG
-		 * longdesc FRAME, IFRAME
-		 * profile HEAD
-		 * src SCRIPT
-		 * src INPUT
-		 * src FRAME, IFRAME
-		 * src IMG
-		 * usemap IMG, INPUT, OBJECT
-		 * 
-		 */
+		// Resolve relative URL on attributes
+		$this->map( 'resolveRelativePaths' );
 		/* TODO: And even maybe for url()s on style attrs (CSS 2.1):
 		 * background-image content cue-after cue-before cursor
 		 * list-style-image play-during 
