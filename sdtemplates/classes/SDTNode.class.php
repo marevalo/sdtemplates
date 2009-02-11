@@ -80,7 +80,7 @@ class SDTNode {
 				if ( strtoupper( $attributes->item ( $index )->name ) 
 						== "CLASS" &&
 				     $attributes->item ( $index )->value == $class ) {
-					return new SDTNode ( $this , $node );
+					return new SDTNode ( $this->parentPage , $node );
 				}
 			}
 		}

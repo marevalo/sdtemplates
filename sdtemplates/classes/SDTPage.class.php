@@ -5,16 +5,24 @@ class SDTPage extends SDTNode {
 	protected $DOMDocument ;
 	protected $parentRepository ;
 	
-	function __construct ( $parentRepo , $filename , $DOMDocument = NULL ) {
-		$this->sourceFile = $filename ;
+	function __construct (	$filename ,
+							$parentRepo = NULL ,
+							$DOMDocument = NULL ) {
+		if ( is_null($parentRepo) ) {
+			$this -> $parentRepo = new SDTRepository( "." );
+		}
 		$this->parentRepository = $parentRepo ;
 		if ( is_null( $DOMDocument) ) {
 			$this->DOMDocument = new DOMDocument();
-			$this->DOMDocument->loadHTMLFile($filename);
+			$this->DOMDocument->loadHTMLFile(
+				$this->parentRepository->getSourceURI()."/".
+				$this->parentRepository->getActiveTheme()."/".
+				$filename
+			);
 		} else {
 			$this->DOMDocument = $DOMDocument ;
 		}
-		parent::__construct( $this , $this->DOMDocument , $this->sourceFile );
+		parent::__construct( $this , $this->DOMDocument , $filename );
 		/* After this we should process all relative URI attrs
 		 * for TAGS (HTML4.01):
 		 * action FORM

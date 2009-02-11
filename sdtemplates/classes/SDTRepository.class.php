@@ -1,7 +1,7 @@
 <?php
 include_once ( "SDTPage.class.php" ) ;
 
-class SDRepository {
+class SDTRepository {
 	private $sourceURI ;
 	private $publicURI ;
 	private $activeTheme ;
@@ -12,40 +12,49 @@ class SDRepository {
 		$this->publicURI = $publicURI ;
 		if ( $dirh = @openDir($sourceURI) ) {
 			while ( $readh = readdir($dirh) ) {
-				if ( is_dir($readh) ) {
+				if ( is_dir($this->sourceURI."/".$readh) &&
+						$readh[0] != '.') {
 					array_push ( $this->availableThemes , basename($readh) );
 				}				
 			}
 		} else {
 			trigger_error ( "SDT Error: could not read repository dir");
 		}
-		if ( count( $this->availableThemes ) > 0 ) {
+		if ( count( $this->availableThemes ) != 0 ) {
 			if ( in_array( "default" , $this->availableThemes ) ) {
 				$this->activeTheme = "default" ;
 			} else {
 				$this->activeTheme = $this->availableThemes[0];
 			}
 		} else {
-			trigger_error ( "SDT Error: no available themes on repository");
+			$this->activeTheme = "." ;
 		}
 	}
 	
 	function getPage ( $filename ) {
 		if ( file_exists(
-			$this-sourceURI."/".$this->activeTheme."/".$filename) ) {
-				return new SDTPage ( $this , $filename );
+			$this->sourceURI."/".$this->activeTheme."/".$filename) ) {
+				return new SDTPage ( $filename , $this );
 
 		} else {
-			trigger_error ( "SDT Error: could not find page on theme");
+			trigger_error ( "SDT Error: could not find page ".$this->sourceURI."/".$this->activeTheme."/".$filename." on theme");
 		}
 	}
 	
 	function getAvailableThemes ( ) {
-		return $availableThemes( );	
+		return $this->availableThemes( );	
 	}
 	
 	function getActiveTheme ( ) {
-		return $activeTheme ;
+		return $this->activeTheme ;
+	}
+	
+	function getSourceURI ( ) {
+		return $this->sourceURI ;
+	}
+	
+	function getPublicURI ( ) {
+		return $this->publicURI ;
 	}
 	
 	function setTheme ( $theme ) {

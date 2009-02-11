@@ -5,7 +5,7 @@
 include_once( "SDTRepository.class.php" );
 
 // Set repository
-$repo = SDTSetBase ( "templates" );
+$repo = new SDTRepository ( "templates" );
 
 // We get the file from repository
 $mypage = $repo->getPage ( "frontpage.html" );
@@ -20,9 +20,10 @@ $title->setContent("This is the new title");
 
 // Add some elements inside the code
 $body = $mypage->getFirstNodeByTagName("body");
-$body->appendChildFromText ( "
-	<p>This paragraph <a href='#bogus_added_anchor'>added</a> from inside the code</p>
-" );
+$body->appendChildFromText (
+	"<p>This paragraph <a href='#bogus_added_anchor'>added</a>".
+	" from inside the code</p>"
+);
 
 // Using a node inside the page as a subtemplate, modify and append it
 $toc = $body->getNodeByClass( "toc" );
