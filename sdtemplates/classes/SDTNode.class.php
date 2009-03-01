@@ -5,10 +5,14 @@ class SDTNode {
 	protected $DOMNode ;
 	protected $parentPage ;
 	protected $sourceFile ;
+	protected $selector ;
 	
-	function __construct ( $parentPage , $DOMNode , $sourceFile = NULL ) {
+	function __construct ( $parentPage , $DOMNode ,
+				$selector = "" ,
+				$sourceFile = NULL ) {
 		$this->parentPage = $parentPage ;
 		$this->DOMNode = $DOMNode ;
+		$this->selector = $selector ;
 		if ( is_null ($sourceFile) ) {
 			$this->sourceFile = $this->parentPage->getSourceFile();
 		} else {
@@ -37,7 +41,7 @@ class SDTNode {
 		return NULL;
 	}
 	
-	function getAttributes ( $name ) {
+	function getAttributes ( ) {
 		$returnArray = array ();
 		if ( $this->DOMNode->hasAttributes() ) {
 			foreach ($this->DOMNode->attributes as $attrName => $attrNode) {
@@ -51,21 +55,43 @@ class SDTNode {
 		return $sourceFile ;
 	}
 	
-	function getFirstNodeByTagName ( $tagName ) {
+	function getNodeByTagName ( $tagName ) {
 		$nodeList = $this->DOMNode->getElementsByTagName( $tagName ) ;
 		if ( $nodeList->length != 0 ) {
+			$node = $nodeList->item(0) ;
+			// Create the new entry point for the new node
+			$entryPoint = $this->parentPage->getAncestorEntryPoint ( $node );
+			$entryPoint["node"] = $node ;
+			$entryPoint["selector"] .= " ".$tagName ;
+			$entryPoint["selector"] = trim ( $entryPoint["selector"] ) ;
+			// add it
+			$this->parentPage->addEntryPoint ( $entryPoint );
+			// And create the SDTNode
 			return new SDTNode ( 
 						$this->parentPage ,
-						$nodeList->item(0)
+						$node ,
+						$entryPoint["selector"] ,
+						$entryPoint["source"]
 					);
 			
 		}
+		return NULL;
 	}
 	
 	function getNodeById ( $id ) {
+		$node = $this->parentPage->DOMNode->getElementById( $id );
+		// Create the new entry point for the new node
+		$entryPoint = $this->parentPage->getAncestorEntryPoint ( $node );
+		$entryPoint["node"] = $node ;
+		$entryPoint["selector"] .= " #".$id ;
+		$entryPoint["selector"] = trim ( $entryPoint["selector"] ) ;
+		// add it
+		$this->parentPage->addEntryPoint ( $entryPoint );
 		return new SDTNode (
 						$this->parentPage ,
-						$this->DOMNode->getElementById( $id )
+						$node ,
+						$entryPoint["selector"] ,
+						$entryPoint["source"]
 					);
 	}
 	
@@ -80,7 +106,19 @@ class SDTNode {
 				if ( strtoupper( $attributes->item ( $index )->name ) 
 						== "CLASS" &&
 				     $attributes->item ( $index )->value == $class ) {
-					return new SDTNode ( $this->parentPage , $node );
+					// Create the new entry point for the new node
+					$entryPoint["node"] = $node ;
+					$entryPoint["source"] = $this->sourceFile ;
+					$entryPoint["selector"] .= " .".$class ;
+					$entryPoint["selector"] = trim($entryPoint["selector"]) ;
+					// add it
+					$this->parentPage->addEntryPoint ( $entryPoint );
+				   	return new SDTNode (
+						$this->parentPage ,
+						$node ,
+						$entryPoint["selector"] ,
+						$entryPoint["source"]
+					);
 				}
 			}
 		}
@@ -113,16 +151,27 @@ class SDTNode {
 		} else {
 			$childDOMNode = $childNode->DOMNode;
 		}
+		// Create the new entry point for the new node
+		$entryPoint["node"] = $childDOMNode ;
+		$entryPoint["source"] = $childNode->sourceFile ;
+		$entryPoint["selector"] = $childNode->selector ;
+		// add it
+		$this->parentPage->addEntryPoint ( $entryPoint );
 		$this->DOMNode->appendChild ( $childDOMNode );
 	}
 	
 	function appendChildFromText ( $string ) {
-		$this->DOMNode->appendChild(
-			$this->DOMNode->ownerDocument->importNode(
+		$node = $this->DOMNode->ownerDocument->importNode(
 				dom_import_simplexml( simplexml_load_string( $string ) ) ,
 				true
-			)
-		);
+			); 
+		// Create the new entry point for the new node
+		$entryPoint["node"] = $node ;
+		$entryPoint["source"] = "<code>" ;
+		$entryPoint["selector"] = "" ;
+		// add it
+		$this->parentPage->addEntryPoint ( $entryPoint );
+		$this->DOMNode->appendChild( $node );
 		
 	}
 	
@@ -130,6 +179,7 @@ class SDTNode {
 		return new SDTNode (
 			$this->parentPage ,
 			$this->DOMNode->cloneNode( $deep ) ,
+			$this->selector ,
 			$this->sourceFile );
 	}
 	

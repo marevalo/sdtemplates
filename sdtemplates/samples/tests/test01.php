@@ -11,7 +11,7 @@ $repo = new SDTRepository ( "templates" );
 $mypage = $repo->getPage ( "frontpage.html" );
 
 // Change the window title
-$windowtitle = $mypage->getFirstNodeByTagName("title");
+$windowtitle = $mypage->getNodeByTagName("title");
 $windowtitle->setContent("This is the new window title");
 
 // Change the body title
@@ -19,7 +19,7 @@ $title = $mypage->getNodeById("title");
 $title->setContent("This is the new title");
 
 // Add some elements inside the code
-$body = $mypage->getFirstNodeByTagName("body");
+$body = $mypage->getNodeByTagName("body");
 $body->appendChildFromText (
 	"<p>This paragraph <a href='#bogus_added_anchor'>added</a>".
 	" from inside the code</p>"
@@ -36,9 +36,6 @@ $copy->setContent( "New entry 2" );
 $toc->appendChild ( $copy->cloneNode() );
 $copy->setContent( "New entry 3" );
 $toc->appendChild ( $copy->cloneNode() );
-
-// Add a document tree representation for debugging
-$body->appendChildFromText ( "<pre>".$mypage->walkThrough()."</pre>" ) ;
 
 // Output the complete page
 $mypage->printHTML();
