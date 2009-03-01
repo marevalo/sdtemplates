@@ -6,6 +6,10 @@ class SDTRepository {
 	private $publicURI ;
 	private $activeTheme ;
 	private $availableThemes = array();
+	private $options = array (
+		"showInfoInline" => false ,
+		"showInfoReport" => false
+	);
 	
 	/* These are the attributes which holds URIs for TAGS (as of HTML4.01):
 	 * action FORM
@@ -39,9 +43,7 @@ class SDTRepository {
 		"profile" ,
 		"src" ,
 		"usemap" ,
-	);
-	
-	
+	);	
 	
 	function __construct ( $sourceURI , $publicURI = NULL ) {
 		$this->sourceURI = $sourceURI ;
@@ -75,7 +77,11 @@ class SDTRepository {
 				return new SDTPage ( $filename , $this );
 
 		} else {
-			trigger_error ( "SDT Error: could not find page ".$this->sourceURI."/".$this->activeTheme."/".$filename." on theme");
+			trigger_error (
+				"SDT Error: could not find page ".
+				$this->sourceURI."/".$this->activeTheme."/".$filename.
+				" on theme"
+			);
 		}
 	}
 	
@@ -102,5 +108,22 @@ class SDTRepository {
 			trigger_error ( "SDT Error: Unavailable theme" );
 		}
 	}
+	
+	function getOption ( $option ) {
+		if ( isset($this->options[$option]) ) {
+			return $this->options[$option];
+		} else {
+			trigger_error ( "SDT Error: could not get option ".$option);
+		}
+	}
+
+	function setOption ( $option , $value ) {
+		if ( isset($this->options[$option]) ) {
+			$this->options[$option] = $value ;
+		} else {
+			trigger_error ( "SDT Error: could not set option ".$option);
+		}
+	}
+
 }
 ?>
